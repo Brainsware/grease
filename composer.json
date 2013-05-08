@@ -1,0 +1,22 @@
+{
+    "name": "brainsware/grease",
+    "description": "A minimalistic testing framework",
+    "license": "Apache-2.0",
+	"homepage": "http://baconphp.net",
+
+    "authors": [
+		{ "name": "Alexander Pánek", "email": "a.panek@brainsware.org"  }
+    ],
+
+	"support": {
+		"source": "https://github.com/Brainsware/grease",
+		"issues": "https://github.com/Brainsware/grease/issues"
+	},
+
+    "require": {
+		"php":              ">= 5.4.0",
+		"brainsware/sauce": "0.1.*"
+    },
+
+	"autoload": { "psr-0": { "Grease": "lib/" } }
+}
