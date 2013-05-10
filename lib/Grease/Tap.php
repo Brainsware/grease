@@ -17,7 +17,7 @@
 
 */
 
-class Tap
+class Tap implements Presenter
 {
 	protected $tests = [];
 
