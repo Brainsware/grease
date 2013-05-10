@@ -17,6 +17,8 @@
 
 */
 
+namespace Grease;
+
 class Aggregator extends \Sauce\Vector
 {
 	public function __construct ($data = [])

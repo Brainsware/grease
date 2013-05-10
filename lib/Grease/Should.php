@@ -17,6 +17,8 @@
 
 */
 
+namespace Grease;
+
 /* Should is a class for general asserts and to check whether code throws or
  * does not throw exceptions of given type as expected.
  *

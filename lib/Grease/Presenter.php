@@ -17,6 +17,8 @@
 
 */
 
+namespace Grease;
+
 interface Presenter
 {
 	public function output ();

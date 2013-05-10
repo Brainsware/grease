@@ -17,6 +17,8 @@
 
 */
 
+namespace Grease;
+
 class Tap implements Presenter
 {
 	protected $tests = [];
