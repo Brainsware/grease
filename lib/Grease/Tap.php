@@ -49,7 +49,7 @@ class Tap implements Presenter
 			printf("%d..%d\n", 1, $should->results()->count());
 			printf("# %s:\n", $should->name());
 
-			foreach $should->results()->to_array() as $i => $result) {
+			foreach ($should->results()->to_array() as $i => $result) {
 				$success = $result->success ? \Sauce\CliColor::green('ok') : \Sauce\CliColor::red('not ok');
 
 				printf("%s %d - %s\n", $success, ($i + 1), $result->name, $success);
