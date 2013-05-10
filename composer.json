@@ -18,5 +18,8 @@
 		"brainsware/sauce": "0.1.*"
     },
 
-	"autoload": { "psr-0": { "Grease": "lib/" } }
+	"autoload": { "psr-0": {
+		"Grease": "lib/",
+		"Tests":  "." 
+	} }
 }
