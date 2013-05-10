@@ -33,7 +33,7 @@ trait Test
 		$this->register();
 	}
 
-	abstract public function tests () { }
+	abstract public function tests ();
 }
 
 ?>
