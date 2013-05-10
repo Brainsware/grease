@@ -22,7 +22,7 @@ namespace Grease;
 /* The Test class is the base class for all test cases. */
 trait Test
 {
-	protected $should;
+	public $should;
 
 	public function __construct ()
 	{
@@ -30,7 +30,7 @@ trait Test
 
 		$this->should = new Should($actual_class_name);
 
-		$this->register();
+		$this->tests();
 	}
 
 	abstract public function tests ();

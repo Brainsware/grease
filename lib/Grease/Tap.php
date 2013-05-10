@@ -32,7 +32,7 @@ class Tap implements Presenter
 			return;
 		}
 
-		if ($tests instanceof \Grease\Aggregator) {
+		if ($tests instanceof \Grease\Aggregator || is_an_array($tests)) {
 			$this->tests = V($tests);
 
 			return;
@@ -43,14 +43,27 @@ class Tap implements Presenter
 		throw new \InvalidArgumentException("Expected instance of \Grease\Should or \Grease\Aggregator. Got instance of {$class}");
 	}
 
+	public function push ($data)
+	{
+		$this->tests->push($data);
+	}
+
 	public function output ()
 	{
-		foreach ($this->tests->to_array() as $should) {
-			printf("%d..%d\n", 1, $should->results()->count());
-			printf("# %s:\n", $should->name());
+		foreach ($this->tests->to_array() as $test) {
+			$should = $test->should;
+
+
+			if ($should->results()->count() < 1) {
+				printf("No tests for %s yet.\n", $should->name());
+				continue;
+			} else {
+				printf("%d..%d\n", 1, $should->results()->count());
+				printf("# %s:\n", $should->name());
+			}
 
 			foreach ($should->results()->to_array() as $i => $result) {
-				$success = $result->success ? \Sauce\CliColor::green('ok') : \Sauce\CliColor::red('not ok');
+				$success = $result->success ? \Sauce\CliColors::green('ok') : \Sauce\CliColors::red('not ok');
 
 				printf("%s %d - %s\n", $success, ($i + 1), $result->name, $success);
 			}
