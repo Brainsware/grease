@@ -16,7 +16,11 @@ $arguments->shift();
 
 $directories = V();
 
-if (is_dir($test_dir)) $directories->push($test_dir);
+if (is_dir($test_dir)) {
+	$directories->push($test_dir);
+
+	$loader->add('Tests', $dir);
+}
 
 foreach ($arguments->to_array() as $arg) {
 	switch ($arg) {
@@ -30,7 +34,7 @@ foreach ($arguments->to_array() as $arg) {
 				$arg = \Sauce\Path::join($dir, $arg);
 			}
 
-			$loader->add('Tests', $arg);
+			$loader->add('Tests', realpath($arg . '/../'));
 
 			$directories->push($arg);
 	}
