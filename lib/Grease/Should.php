@@ -145,7 +145,7 @@ class Should
 	 *
 	 * TODO: Examples
 	 */
-	public function not_throw ($name, $description, $fn, $exception_type)
+	public function not_throw ($name, $description, $fn)
 	{
 		$success = false;
 		$message = '';
@@ -164,7 +164,7 @@ class Should
 			} catch (\Exception $e) {
 				$type_of_e = get_class($e);
 
-				$message = "An exception other than the expected {$exception_type} was thrown in file {$e->getFile()}:{$e->getLine()}: \n({$type_of_e}) {$e->getMessage()}";
+				$message = "An exception of type {$type_of_e} was thrown in file {$e->getFile()}:{$e->getLine()}: \n({$type_of_e}) {$e->getMessage()}";
 				$trace   = V($e->getTrace());
 			}
 		}
