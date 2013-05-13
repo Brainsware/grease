@@ -21,5 +21,7 @@
 	"autoload": { "psr-0": {
 		"Grease": "lib/",
 		"Tests":  "." 
-	} }
+	} },
+
+	"bin": [ "bin/grease" ]
 }
