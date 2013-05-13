@@ -29,29 +29,70 @@ class Runner
 	{
 		$this->aggregator = new Aggregator();
 
-		$entries = \Sauce\Path::ls($directory);
+		$this->aggregate($this->traverse($directory));
+
+		$this->display();
+	}
+
+	public function display ()
+	{
+		$this->presenter = new Tap($this->aggregator);	
+		$this->presenter->output();
+	}
+
+	public function traverse ($directory, $namespaces = [])
+	{
+		if (!is_an_array($directory)) {
+			$path = \Sauce\Path::info($directory);
+
+			$path->absolute = $directory;
+			$path->dirname  = basename(dirname($path->absolute));
+			$path->is_dir   = is_dir($path->absolute);
+
+			$directory = $path;
+		}
+
+		$namespaces = V($namespaces);
+		$namespaces->push($directory->filename);
+
+		$entries = \Sauce\Path::ls($directory->absolute);
 
 		// Add extensive path info to the listing
 		$entries = $entries->map(function ($entry) use ($directory) {
 			$path = \Sauce\Path::info($entry);
-			$path->absolute = \Sauce\Path::join($directory, $entry);
+			$path->absolute = \Sauce\Path::join($directory->absolute, $entry);
 			$path->dirname  = basename(dirname($path->absolute));
-			$path->is_dir   = is_dir($entry);
+			$path->is_dir   = is_dir($path->absolute);
 
 			return $path;
 		});
 
-		// Select only non-directory entries
-		// TODO: Change this to recursively gather test cases (and support sub-namespaces)
-		$entries = $entries->select(function ($entry) { return !$entry->is_dir; });
+		$entries = $entries->map(function ($entry) use ($namespaces) {
+			if ($entry->is_dir) {
+				return $entry;
+			}
 
-		// Add the class_name (\Namespace\ClassName) to the path info
-		$entries = $entries->map(function ($entry) {
-			$entry->class_name = "\\" . $entry->dirname . "\\" . $entry->filename;
+			$entry->class_name = "\\" . $namespaces->join("\\") . "\\" . $entry->filename;
 			$entry->is_class = class_exists($entry->class_name);
 
 			return $entry;
 		});
+
+		foreach ($entries->to_array() as $entry) {
+			if ($entry->is_dir) {
+				// Recurse!
+				$entries->push($this->traverse($entry, $namespaces));
+
+				continue;
+			}
+		}
+
+		return $entries;
+	}
+
+	protected function aggregate ($entries = [])
+	{
+		$entries = V($entries);
 
 		foreach ($entries->to_array() as $entry) {
 			if (!$entry->is_class) continue;
@@ -61,10 +102,6 @@ class Runner
 
 			$this->aggregator->push($test);
 		}
-
-		$this->presenter = new Tap($this->aggregator);	
-
-		$this->presenter->output();
 	}
 }
 
