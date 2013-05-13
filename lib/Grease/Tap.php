@@ -53,6 +53,7 @@ class Tap implements Presenter
 		foreach ($this->tests->to_array() as $test) {
 			$should = $test->should;
 
+			printf("\n");
 
 			if ($should->results()->count() < 1) {
 				printf("No tests for %s yet.\n", $should->name());
