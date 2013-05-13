@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$arguments = V($argv);
+
+$script = realpath($arguments[0]);
+$app_dir = realpath(\Sauce\Path::join(__DIR__, '..'));
+
+// Delete script name
+$arguments->shift();
+
+$directories = V();
+
+$test_dir = \Sauce\Path::join($app_dir, 'Tests');
+
+if (is_dir($test_dir)) {
+	$directories->push($test_dir);
+}
+
+foreach ($arguments->to_array() as $arg) {
+	switch ($arg) {
+		case "--help":
+		case "-h":
+			echo 'Usage: bin/grease [directory]';
+			break;
+
+		default:
+			if (!\Sauce\Path::is_absolute($arg)) {
+				$arg = \Sauce\Path::join($app_dir, $arg);
+			}
+
+			$directories->push($arg);
+	}
+}
+
+foreach ($directories->to_array() as $directory) {
+	new \Grease\Runner($directory);
+}
+
+?>
