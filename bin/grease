@@ -1,23 +1,22 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+$dir = realpath(__DIR__);
+
+if (substr($dir, -28, 28) === 'vendor/brainsware/grease/bin') {
+	$dir = substr($dir, 0, (strlen($dir) - 28));
+}
+
+$loader = require $dir . '/vendor/autoload.php';
+
+$test_dir = \Sauce\Path::join($dir, 'Tests');
 
 $arguments = V($argv);
-
-$script = realpath($arguments[0]);
-$app_dir = realpath(\Sauce\Path::join(__DIR__, '../..'));
-
-// Delete script name
 $arguments->shift();
 
 $directories = V();
 
-$test_dir = \Sauce\Path::join($app_dir, 'Tests');
-
-if (is_dir($test_dir)) {
-	$directories->push($test_dir);
-}
+if (is_dir($test_dir)) $directories->push($test_dir);
 
 foreach ($arguments->to_array() as $arg) {
 	switch ($arg) {
@@ -28,15 +27,17 @@ foreach ($arguments->to_array() as $arg) {
 
 		default:
 			if (!\Sauce\Path::is_absolute($arg)) {
-				$arg = \Sauce\Path::join($app_dir, $arg);
+				$arg = \Sauce\Path::join($dir, $arg);
 			}
+
+			$loader->add('Tests', $arg);
 
 			$directories->push($arg);
 	}
 }
 
 foreach ($directories->to_array() as $directory) {
-	new \Grease\Runner($directory);
+	$runner = new \Grease\Runner($directory);
 }
 
 ?>
