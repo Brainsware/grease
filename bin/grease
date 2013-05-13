@@ -6,7 +6,7 @@ require __DIR__ . '/../vendor/autoload.php';
 $arguments = V($argv);
 
 $script = realpath($arguments[0]);
-$app_dir = realpath(\Sauce\Path::join(__DIR__, '..'));
+$app_dir = realpath(\Sauce\Path::join(__DIR__, '../..'));
 
 // Delete script name
 $arguments->shift();
