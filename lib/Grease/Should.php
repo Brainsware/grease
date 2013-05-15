@@ -185,8 +185,76 @@ class Should
 		switch ($name) {
 			case 'throw': return call_user_func_array([ $this, '_throw' ], $arguments); break;
 
-			default: trigger_error("Call to undefined method ".__CLASS__."::$func()", E_USER_ERROR); break;
+			default: trigger_error("Call to undefined method ".__CLASS__."::$name()", E_USER_ERROR); break;
 		}
+	}
+
+	public function implement ($name, $description, $interface, $class_or_object)
+	{
+		$success = false;
+		$message = '';
+		$trace   = V();
+
+		// Strip namespace prefix if present; #class_implements returns interfaces without it
+		// TODO: Check how this works with interfaces in nested namespaces!
+		if ($interface[0] == '\\') {
+			$interface = S($interface);
+			$interface->sliceF(1, $interface->length() - 1);
+			$interface = $interface->to_s();
+		}
+
+		try {
+			$success = V(class_implements($class_or_object))->includes($interface);
+
+		} catch (\Exception $e) {
+			$type_of_e = get_class($e);
+
+			$success = false;
+			$message = "An exception of type {$type_of_e} was thrown while checking for the interface {$interface} in file {$e->getFile()}:{$e->getLine()}:\n{$type_of_e}) {$e->getMessage()}";
+			$trace = V($e->getTrace());
+		}
+
+		$this->results->push(A([
+			'name'        => $name,
+			'description' => $description,
+			'success'     => $success,
+			'message'     => $message,
+			'trace'       => $trace
+		]));
+	}
+
+	public function not_implement ($name, $description, $interface, $class_or_object)
+	{
+		$success = false;
+		$message = '';
+		$trace   = V();
+
+		// Strip namespace prefix if present; #class_implements returns interfaces without it
+		// TODO: Check how this works with interfaces in nested namespaces!
+		if ($interface[0] == '\\') {
+			$interface = S($interface);
+			$interface->sliceF(1, $interface->length() - 1);
+			$interface = $interface->to_s();
+		}
+
+		try {
+			$success = ! (V(class_implements($class_or_object))->includes($interface));
+
+		} catch (\Exception $e) {
+			$type_of_e = get_class($e);
+
+			$success = false;
+			$message = "An exception of type {$type_of_e} was thrown while checking for the interface {$interface} in file {$e->getFile()}:{$e->getLine()}:\n{$type_of_e}) {$e->getMessage()}";
+			$trace = V($e->getTrace());
+		}
+
+		$this->results->push(A([
+			'name'        => $name,
+			'description' => $description,
+			'success'     => $success,
+			'message'     => $message,
+			'trace'       => $trace
+		]));
 	}
 }
 
